@@ -16,7 +16,7 @@ ostream& operator<<(ostream& out, vector<T> V){
 }
 
 // The length of the string
-int N;
+int N, MOD=1e9+7;
 
 vector<int> getSuffixVector(string str){
     vector<int> suffixArray{0};
@@ -65,8 +65,8 @@ int getAppearances(int state, int i){
     if(!i) return states[state][0] == N;
     if(dpGet[state][i]!=-1)return dpGet[state][i];
     dpGet[state][i] = getAppearances(state,i-1);
-    dpGet[state][i] += states[stateJump(state,i-1)][i] == N;
-    dpGet[state][i] += getAppearances(states[stateJump(state,i-1)][i],i-1);
+    (dpGet[state][i] += states[stateJump(state,i-1)][i] == N)%=MOD;
+    (dpGet[state][i] += getAppearances(states[stateJump(state,i-1)][i],i-1))%=MOD;
     return dpGet[state][i];
 }
 
@@ -74,9 +74,11 @@ int main(){
     cin.tie(0);
     cout.tie(0);
     ios_base::sync_with_stdio(false);
-    string str = "aba";
+    string str;
+    int i;
+    cin >> str >> i;
     memset(dpJump,-1,sizeof dpJump);
     memset(dpGet,-1,sizeof dpGet);
     constructStates(str);
-    cout << getAppearances(0,3) << endl;
+    cout << getAppearances(0,i) << endl;
 }
