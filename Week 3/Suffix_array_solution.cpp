@@ -43,7 +43,7 @@ public:
         auto cmp = [this](int i, int j){
                 if(keys[i]!=keys[j])return keys[i]<keys[j]; // If the keys are different then compare them
                 i+=step;j+=step; // Else get the 2x keys.
-                return i>=N&&j>=N?i>j:keys[i]<=keys[j]; // If the indice leave the array then we return the smaller one(the right-er one)\
+                return (i<N&&j<N?keys[i]<keys[j]:i>j); // If the indice leave the array then we return the smaller one(the right-er one)\
                 else we return the smaller of the second keys.
             };
         for(step = 1; tmp[N-1]!=N-1; step*=2){ // If the last key is N-1 this means that every key is unique; So no need to continue.
@@ -55,7 +55,7 @@ public:
     }
     vector<int> &constructLCP(){
         for (int i = 0, k = 0; i < N; ++i) // Since k will only go up, the complexity is O(N).
-            if (keys[i] != N - 1){ // We stop on the last element where lcp is undefined.
+            if (keys[i] != N - 1){ // We don't do the last element where lcp is undefined.
                 for (int j = SA[keys[i] + 1]; str[i + k] == str[j + k]; ++k);// We continue from the last point.
                 lcp[keys[i]] = k;
                 k-=(k!=0); // If the indice has changed, then the last change has overjumped and must be remade.
