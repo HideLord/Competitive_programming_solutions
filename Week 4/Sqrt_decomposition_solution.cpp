@@ -23,7 +23,7 @@ template<class T> struct Node{
     vector<T> vals;
     #define def 0
     T res = def;
-    #define op(a,b) ((a)+(b)) // The operation should be commutative
+    #define op(a,b) ((a)+(b)) // The operation must be commutative
     Node(const int SZ){
         vals.assign(SZ,def);
     }
@@ -35,6 +35,14 @@ template<class T> struct Node{
     void modify(int ind, T val){
         vals[ind] = val;
         reeval();
+    }
+    Node split(int l){ // [0,l),[l,SIZE)
+        Node<T> next(sz(vals)-l);
+        for(int i = 0;l<sz(vals); l++)next.vals[i++] = vals[l];
+        next.reeval();
+        vals.resize(l);
+        reeval();
+        return next;
     }
     T query(int l, int r){// [l,r)
         T res = def;
@@ -59,6 +67,16 @@ template<class T> struct sqrtD{
         }
         n.reeval();
         nodes.push_back(n);
+    }
+    void split(typename list<Node<T>>::iterator it, int l){ // Splits in [0,l), [l,sqrtSize)
+        Node<T> next = it->split(l);
+        nodes.insert(it,next);
+    }
+    void merge(typename list<Node<T>>::iterator it){ // merges it and it->next
+        auto next = std::next(it);
+        it->vals.insert(it->vals.end(),all(next->vals));
+        nodes.erase(next);
+        it->reeval();
     }
     void modify(int ind, T val){
         int curr = 0;
@@ -99,6 +117,7 @@ int main(){
     sqrtD<int> sd(V);
     int real_res = 0, l=2,r=23;
     sd.modify(13,0);
+    sd.merge(sd.nodes.begin());
     V[13] = 0;
     for(int i = l; i < r; i++)real_res=op(V[i],real_res);
     cout << "wanted: " << real_res << endl;
